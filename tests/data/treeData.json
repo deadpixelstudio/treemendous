@@ -1,0 +1,28 @@
+[
+  {
+    "id": "64ce24c7-3054-42f2-b49f-4cdb52cf1bc7",
+    "name": "users",
+    "parentId": null,
+    "children": [
+      {
+        "id": "51e5e5c0-a0e9-429a-b788-fcb53a88e26c",
+        "name": "admin",
+        "parentId": "64ce24c7-3054-42f2-b49f-4cdb52cf1bc7",
+        "children": []
+      },
+      {
+        "id": "c242e271-9a14-43d2-a7b5-c36654e039ea",
+        "name": "staff",
+        "parentId": "64ce24c7-3054-42f2-b49f-4cdb52cf1bc7",
+        "children": [
+          {
+            "id": "28849d09-0882-4ed6-b8b8-448f28e1e37a",
+            "name": "writer",
+            "parentId": "c242e271-9a14-43d2-a7b5-c36654e039ea",
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]
