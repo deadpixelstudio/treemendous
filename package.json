@@ -1,6 +1,6 @@
 {
   "name": "treemendous",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A javascript package to build, create, traverse and manage tree data structures",
   "keywords": [
     "tree",

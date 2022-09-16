@@ -224,7 +224,9 @@ const Tree = (data, options) => {
   const buildFromData = (data) => {
     data.map((item) => {
       insert(item);
-      buildFromData(item.children);
+      if (item.children) {
+        buildFromData(item.children);
+      }
     });
     return root;
   };

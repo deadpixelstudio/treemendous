@@ -1,15 +1,142 @@
 import Tree from '..';
 const treeData = require('./data/treeData.json');
 
-describe('creating a tree and nodes', () => {
+describe('creating a tree', () => {
+  test('a tree can be created', () => {
+    const newTree = Tree();
+
+    expect(newTree.getRoot).toBeInstanceOf(Function);
+  });
+
+  test('a tree can be created with a flat array of objects', () => {
+    const array = [
+      { id: '1', name: 'Node 1' },
+      { id: '2', name: 'Node 2', parentId: '1' },
+      { id: '3', name: 'Node 3', parentId: '2' },
+    ];
+
+    const newTree = Tree(array);
+
+    const node1 = newTree.findById('1');
+    const node2 = newTree.findById('2');
+    const node3 = newTree.findById('3');
+    const node2Ancestors = newTree.getAncestors(node2);
+    const node2Descendants = newTree.getDescendants(node2);
+
+    expect(node2.name).toEqual('Node 2');
+    expect(node2Ancestors).toEqual(expect.arrayContaining([node1]));
+    expect(node2Descendants).toEqual(expect.arrayContaining([node3]));
+  });
+
+  test('a tree can be created with a nested array of objects', () => {
+    const array = [
+      {
+        id: '1',
+        name: 'Node 1',
+        children: [
+          {
+            id: '2',
+            name: 'Node 2',
+            parentId: '1',
+            children: [
+              { id: '3', name: 'Node 3', parentId: '2', children: [] },
+            ],
+          },
+        ],
+      },
+    ];
+
+    const newTree = Tree(array);
+
+    const node1 = newTree.findById('1');
+    const node2 = newTree.findById('2');
+    const node3 = newTree.findById('3');
+    const node2Ancestors = newTree.getAncestors(node2);
+    const node2Descendants = newTree.getDescendants(node2);
+
+    expect(node2.name).toEqual('Node 2');
+    expect(node2Ancestors).toEqual(expect.arrayContaining([node1]));
+    expect(node2Descendants).toEqual(expect.arrayContaining([node3]));
+  });
+});
+
+describe('creating a tree with a custom config', () => {
+  let newTree;
+  let newNode1;
+  let newNode1_1;
+  let newNode1_2;
+  let newNode2;
+  let newNode3;
+  let newNode3_1;
+  let newNode3_2;
+  let newNode3_2_1;
+  let newNode4;
+
+  const config = {
+    id: 'custom_id',
+    parentId: 'custom_parent_id',
+  };
+
+  beforeEach(() => {
+    newTree = Tree(null, config);
+    newNode1 = newTree.insert({
+      custom_id: '1',
+      name: 'New Node 1',
+    });
+    newNode1_1 = newTree.insert({
+      custom_id: '1_1',
+      name: 'New Node 1_1',
+      custom_parent_id: '1',
+    });
+    newNode1_2 = newTree.insert({
+      custom_id: '1_2',
+      name: 'New Node 1_2',
+      custom_parent_id: '1',
+    });
+    newNode2 = newTree.insert({
+      custom_id: '2',
+      name: 'New Node 2',
+      custom_parent_id: '1',
+    });
+    newNode3 = newTree.insert({
+      custom_id: '3',
+      name: 'New Node 3',
+      custom_parent_id: '2',
+    });
+    newNode3_1 = newTree.insert({
+      custom_id: '3_1',
+      name: 'New Node 3_1',
+      custom_parent_id: '3',
+    });
+    newNode3_2 = newTree.insert({
+      custom_id: '3_2',
+      name: 'New Node 3_2',
+      custom_parent_id: '3',
+    });
+    newNode3_2_1 = newTree.insert(
+      { custom_id: '3_2_1', name: 'New Node 3_2_1', custom_parent_id: '3_2' },
+      newNode3_2
+    );
+    newNode4 = newTree.insert({
+      custom_id: '4',
+      name: 'New Node 4',
+      custom_parent_id: '3',
+    });
+  });
+
+  test('a tree can be created with a custom config', () => {
+    const searchForNode3_1 = newTree.findById('3_1');
+    const searchForNode3_2 = newTree.findById(newNode3_2.custom_id);
+    expect(searchForNode3_1).toBe(newNode3_1);
+    expect(searchForNode3_2).toBe(newNode3_2);
+  });
+});
+
+describe('creating nodes', () => {
   let newTree;
 
   beforeEach(() => {
     newTree = Tree();
-  });
-
-  test('a tree can be created', () => {
-    expect(newTree.getRoot).toBeInstanceOf(Function);
   });
 
   test('a tree can insert a node', () => {
@@ -350,76 +477,5 @@ describe('exporting json from a tree', () => {
     const json = newTree.exportJson();
 
     expect(JSON.parse(json)).toEqual(treeData);
-  });
-});
-
-describe('creating a tree with a custom config', () => {
-  let newTree;
-  let newNode1;
-  let newNode1_1;
-  let newNode1_2;
-  let newNode2;
-  let newNode3;
-  let newNode3_1;
-  let newNode3_2;
-  let newNode3_2_1;
-  let newNode4;
-
-  const config = {
-    id: 'custom_id',
-    parentId: 'custom_parent_id',
-  };
-
-  beforeEach(() => {
-    newTree = Tree(null, config);
-    newNode1 = newTree.insert({
-      custom_id: '1',
-      name: 'New Node 1',
-    });
-    newNode1_1 = newTree.insert({
-      custom_id: '1_1',
-      name: 'New Node 1_1',
-      custom_parent_id: '1',
-    });
-    newNode1_2 = newTree.insert({
-      custom_id: '1_2',
-      name: 'New Node 1_2',
-      custom_parent_id: '1',
-    });
-    newNode2 = newTree.insert({
-      custom_id: '2',
-      name: 'New Node 2',
-      custom_parent_id: '1',
-    });
-    newNode3 = newTree.insert({
-      custom_id: '3',
-      name: 'New Node 3',
-      custom_parent_id: '2',
-    });
-    newNode3_1 = newTree.insert({
-      custom_id: '3_1',
-      name: 'New Node 3_1',
-      custom_parent_id: '3',
-    });
-    newNode3_2 = newTree.insert({
-      custom_id: '3_2',
-      name: 'New Node 3_2',
-      custom_parent_id: '3',
-    });
-    newNode3_2_1 = newTree.insert(
-      { custom_id: '3_2_1', name: 'New Node 3_2_1', custom_parent_id: '3_2' },
-      newNode3_2
-    );
-    newNode4 = newTree.insert({
-      custom_id: '4',
-      name: 'New Node 4',
-      custom_parent_id: '3',
-    });
-  });
-  test('a tree can be created with a custom config', () => {
-    const searchForNode3_1 = newTree.findById('3_1');
-    const searchForNode3_2 = newTree.findById(newNode3_2.custom_id);
-    expect(searchForNode3_1).toBe(newNode3_1);
-    expect(searchForNode3_2).toBe(newNode3_2);
   });
 });
